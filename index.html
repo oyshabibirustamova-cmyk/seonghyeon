@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="uz" data-theme="dark"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MiniGames Arena</title>
+<style>
+:root{--bg:#0f1226;--card:#1a1f3d;--tx:#eef0ff;--mut:#9aa3d0;--a:#7c5cff;--b:#00d4ff;--cell:#262c55;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme=light]{--bg:#f4f6ff;--card:#fff;--tx:#161a33;--mut:#5b628a;--cell:#e6e9fb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px system-ui,sans-serif;transition:background .3s}
+.nav{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 20px;position:sticky;top:0;background:var(--card);z-index:5;box-shadow:0 2px 12px #0003}
+.logo{font-weight:800;font-size:20px;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent;margin-right:auto}
+.nav a{color:var(--mut);text-decoration:none;font-size:14px}.nav a:hover{color:var(--tx)}
+input{padding:8px 12px;border-radius:10px;border:1px solid var(--cell);background:var(--bg);color:var(--tx);min-width:0}
+button{font:inherit;cursor:pointer;border:0;color:inherit;transition:.2s}
+.btn{padding:8px 14px;border-radius:10px;background:var(--cell)}.btn:hover{transform:translateY(-2px)}
+.pri{background:linear-gradient(90deg,var(--a),var(--b));color:#fff;font-weight:600}
+main{max-width:1050px;margin:auto;padding:20px}
+.hero{padding:34px 20px;border-radius:20px;background:linear-gradient(120deg,var(--a),var(--b));color:#fff;margin-bottom:20px}
+.hero h1{margin:0 0 6px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.chips .on{background:var(--a);color:#fff}
+h2{margin:26px 0 10px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.card{position:relative;background:var(--card);border-radius:16px;padding:18px;text-align:center;transition:.25s;box-shadow:0 4px 14px #0002}
+.card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 10px 26px #7c5cff55}
+.ic{font-size:40px;margin:8px 0}.card h3{margin:4px 0;font-size:17px}.card p{margin:0 0 12px;color:var(--mut);font-size:13px}
+.fv{position:absolute;right:10px;top:8px;background:none;font-size:20px;color:#fbbf24}
+.play{width:100%;padding:9px;border-radius:10px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:12px 0}.bar b{font-size:20px}
+.stage{position:relative;display:flex;justify-content:center;padding:16px;background:var(--card);border-radius:16px;min-height:200px}
+.ov{position:absolute;inset:0;background:#000b;color:#fff;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;border-radius:16px;font-size:22px;text-align:center;z-index:2}
+.g3,.g4{display:grid;gap:8px;margin:auto}.g3{grid-template-columns:repeat(3,86px)}.g4{grid-template-columns:repeat(4,70px)}
+.cell{height:100%;min-height:70px;font-size:30px;border-radius:12px;background:var(--cell);aspect-ratio:1}.cell:hover{filter:brightness(1.2)}.cell.on{background:var(--a);color:#fff}
+.n{display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;background:hsl(var(--h),70%,50%);color:#fff}.n:empty{background:var(--cell)}
+.t48{touch-action:none}.row{display:flex;gap:10px;justify-content:center}.big{font-size:44px;text-align:center;margin:10px}.info{text-align:center;font-size:20px;margin:6px}
+.cv{display:flex;flex-direction:column;align-items:center;gap:10px}canvas{max-width:100%;border-radius:12px}
+.pad{display:flex;flex-direction:column;align-items:center;gap:6px}.pad button{width:54px;height:44px;border-radius:10px;background:var(--cell)}
+footer{text-align:center;color:var(--mut);padding:30px}
+@media(max-width:520px){.g3{grid-template-columns:repeat(3,76px)}.g4{grid-template-columns:repeat(4,64px)}}
+</style></head><body>
+<header class="nav"><span class="logo">🎮 MiniGames Arena</span>
+<a href="#" data-h="top">Home</a><a href="#" data-h="all">All Games</a><a href="#" data-h="pop">Popular</a><a href="#" data-h="about">About</a>
+<input id="q" placeholder="Qidirish…" aria-label="Qidirish">
+<button class="btn" id="rnd">🎲 Random</button><button class="btn" id="snd">🔊</button><button class="btn" id="thm">🌓</button></header>
+
+<main id="home">
+<div class="hero"><h1>Brauzerda o‘ynang, hech narsa o‘rnatmasdan</h1><div id="stat">Jami o‘yinlar: 0</div></div>
+<div class="chips" id="chips"></div>
+<div id="recentS"><h2>🕘 Oxirgi o‘ynalganlar</h2><div class="grid" id="recent"></div></div>
+<div id="popS"><h2 id="pop">🔥 Eng ko‘p o‘ynalgan</h2><div class="grid" id="popG"></div></div>
+<h2 id="all">🎯 Barcha o‘yinlar</h2><div class="grid" id="grid"></div>
+<h2 id="about">ℹ️ Loyiha haqida</h2><p>Bu birinchi bosqich: platforma (qidiruv, kategoriya, sevimlilar, statistika, Dark/Light, ovoz) va 6 ta to‘liq ishlaydigan o‘yin. Natijalar brauzeringizda (localStorage) saqlanadi.</p>
+</main>
+
+<main id="play" hidden>
+<button class="btn" id="back">← Back to Games</button>
+<h1 id="gt"></h1>
+<div class="bar"><span>Score: <b id="sc">0</b></span><span>Best: <b id="bs">0</b></span>
+<button class="btn pri" id="rs">Restart</button><button class="btn" id="ps">Pause</button></div>
+<div class="stage"><div id="box"></div><div class="ov" id="ov" hidden></div></div>
+<h3>How to Play</h3><p id="rules"></p>
+</main>
+<footer>© MiniGames Arena</footer>
+
+<script>
+const $=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n);
+let S={best:{},plays:{},fav:[],recent:[],sound:1,theme:matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"};
+try{Object.assign(S,JSON.parse(localStorage.getItem("mg")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("mg",JSON.stringify(S))}catch(e){}};
+let ac;const beep=(f=440,d=.08)=>{if(!S.sound)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}};
+
+const G=[
+{id:"xo",name:"Tic Tac Toe",ic:"❌⭕",cat:"Mantiq",rules:"Siz X bilan o‘ynaysiz, kompyuter O bilan. Uchta belgini bir qatorga joylashtiring. G‘alaba — 10 ball.",
+start(b,a){const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let c=Array(9).fill(""),done=0;
+b.innerHTML='<div class="g3"></div>';const g=b.firstChild;
+const W=p=>L.some(l=>l.every(i=>c[i]==p)),draw=()=>{g.innerHTML=c.map((v,i)=>`<button class="cell" data-i="${i}">${v}</button>`).join("")};draw();
+const fin=()=>{if(W("X")){done=1;a.set(10);a.end("Siz yutdingiz!",1)}else if(W("O")){done=1;a.end("Kompyuter yutdi")}else if(c.every(x=>x)){done=1;a.end("Durang")}return done};
+g.onclick=e=>{const i=e.target.dataset.i;if(done||i==null||c[i])return;c[i]="X";beep(520);
+if(!fin()){let m=null;for(const p of["O","X"])for(let k=0;k<9&&m==null;k++)if(!c[k]){c[k]=p;if(W(p))m=k;c[k]=""}
+if(m==null){const f=c.map((v,k)=>v?-1:k).filter(k=>k>=0);m=c[4]?f[rnd(f.length)]:4}
+c[m]="O";fin()}draw()};return()=>{}}},
+
+{id:"rps",name:"Rock Paper Scissors",ic:"✊✋✌️",cat:"Mantiq",rules:"Tanlang: tosh, qog‘oz yoki qaychi. Har bir g‘alaba +1 ball. Yutqazsangiz o‘yin tugaydi, durang hisoblanmaydi.",
+start(b,a){let s=0;const E=["✊","✋","✌️"];
+b.innerHTML='<div class="big" id="r">❔ vs ❔</div><div class="row">'+E.map((e,i)=>`<button class="cell" data-i="${i}">${e}</button>`).join("")+"</div>";
+b.onclick=e=>{const t=e.target.closest("[data-i]");if(!t)return;const k=+t.dataset.i,c=rnd(3);b.querySelector("#r").textContent=E[k]+" vs "+E[c];beep(500);
+if(k==c)return;if((k+2)%3==c){s++;a.set(s)}else a.end("Yutqazdingiz. Seriya: "+s)};return()=>{}}},
+
+{id:"mem",name:"Memory Cards",ic:"🃏",cat:"Xotira",rules:"Kartalarni ochib, bir xil juftliklarni toping. Har juftlik +10 ball, kam yurish — katta bonus.",
+start(b,a){const E=["🍎","🍌","🍇","🍒","🍋","🥝","🍉","🍓"];const d=[...E,...E].sort(()=>Math.random()-.5);let op=[],ok=0,mv=0,lock=0;
+b.innerHTML='<div class="g4"></div>';const g=b.firstChild;
+g.innerHTML=d.map((v,i)=>`<button class="cell" data-i="${i}">?</button>`).join("");
+g.onclick=e=>{const t=e.target.closest("[data-i]");if(!t||lock||t.classList.contains("on"))return;t.textContent=d[t.dataset.i];t.classList.add("on");op.push(t);beep(500);
+if(op.length==2){mv++;if(op[0].textContent==op[1].textContent){ok++;a.set(ok*10);op=[];if(ok==8){a.set(80+Math.max(0,100-mv*4));a.end("Barcha juftlar topildi! Yurishlar: "+mv,1)}}
+else{lock=1;setTimeout(()=>{op.forEach(x=>{x.textContent="?";x.classList.remove("on")});op=[];lock=0},700)}}};return()=>{}}},
+
+{id:"snake",name:"Snake",ic:"🐍",cat:"Arkada",pause:1,rules:"Strelka tugmalari yoki ekrandagi tugmalar bilan boshqaring. Olmani yeng (+10), devor va o‘zingizga urilmang.",
+start(b,a){b.innerHTML='<div class="cv"><canvas width="300" height="300"></canvas><div class="pad"><button data-d="u">▲</button><div class="row"><button data-d="l">◀</button><button data-d="d">▼</button><button data-d="r">▶</button></div></div></div>';
+const x=b.querySelector("canvas").getContext("2d");let s=[[7,7],[6,7]],d=[1,0],nd=d,f=[10,7],sc=0,dead=0;
+const V={u:[0,-1],d:[0,1],l:[-1,0],r:[1,0]},K={ArrowUp:"u",ArrowDown:"d",ArrowLeft:"l",ArrowRight:"r"};
+const turn=k=>{const v=V[k];if(v&&(v[0]+d[0]||v[1]+d[1]))nd=v};
+const kd=e=>{if(K[e.key]){turn(K[e.key]);e.preventDefault()}};document.addEventListener("keydown",kd);
+b.onclick=e=>{const k=e.target.dataset.d;if(k)turn(k)};
+const draw=()=>{x.fillStyle="#10142c";x.fillRect(0,0,300,300);x.fillStyle="#ff4d6d";x.fillRect(f[0]*20+2,f[1]*20+2,16,16);x.fillStyle="#22c55e";s.forEach(p=>x.fillRect(p[0]*20+1,p[1]*20+1,18,18))};
+const t=setInterval(()=>{if(a.paused||dead)return;d=nd;const h=[s[0][0]+d[0],s[0][1]+d[1]];
+if(h[0]<0||h[1]<0||h[0]>14||h[1]>14||s.some(p=>p[0]==h[0]&&p[1]==h[1])){dead=1;a.end("O‘yin tugadi");return}
+s.unshift(h);if(h[0]==f[0]&&h[1]==f[1]){sc+=10;a.set(sc);beep(700);do{f=[rnd(15),rnd(15)]}while(s.some(p=>p[0]==f[0]&&p[1]==f[1]))}else s.pop();draw()},120);draw();
+return()=>{clearInterval(t);document.removeEventListener("keydown",kd)}}},
+
+{id:"2048",name:"2048",ic:"🔢",cat:"Mantiq",pause:1,rules:"Strelka tugmalari yoki barmoq surish bilan plitkalarni suring. Bir xil raqamlar birlashadi. 2048 ga yeting!",
+start(b,a){let g=Array(16).fill(0),sc=0,dead=0;b.innerHTML='<div class="g4 t48"></div>';const el=b.firstChild;
+const add=()=>{const e=g.map((v,i)=>v?-1:i).filter(i=>i>=0);if(e.length)g[e[rnd(e.length)]]=Math.random()<.9?2:4};
+const draw=()=>{el.innerHTML=g.map(v=>`<div class="cell n" style="--h:${Math.log2(v||1)*28}">${v||""}</div>`).join("")};
+const line=(d,r)=>[0,1,2,3].map(c=>d==0?r*4+c:d==1?r*4+3-c:d==2?c*4+r:(3-c)*4+r);
+const mv=d=>{let ch=0;for(let r=0;r<4;r++){const ix=line(d,r),v=ix.map(i=>g[i]).filter(Boolean),o=[];
+for(let i=0;i<v.length;i++){if(v[i]==v[i+1]){o.push(v[i]*2);sc+=v[i]*2;i++}else o.push(v[i])}
+while(o.length<4)o.push(0);ix.forEach((i,k)=>{if(g[i]!=o[k])ch=1;g[i]=o[k]})}
+if(ch){add();a.set(sc);beep(400)}draw();
+if(g.includes(2048)){dead=1;a.end("2048 ga yetdingiz!",1)}else if(!g.includes(0)&&!g.some((v,i)=>(i%4<3&&v==g[i+1])||(i<12&&v==g[i+4]))){dead=1;a.end("Yurishlar tugadi")}};
+const kd=e=>{const d={ArrowLeft:0,ArrowRight:1,ArrowUp:2,ArrowDown:3}[e.key];if(d!=null&&!dead&&!a.paused){e.preventDefault();mv(d)}};
+let t0;el.ontouchstart=e=>{t0=e.touches[0]};el.ontouchend=e=>{const t=e.changedTouches[0],dx=t.clientX-t0.clientX,dy=t.clientY-t0.clientY;
+if(Math.max(Math.abs(dx),Math.abs(dy))<20||dead||a.paused)return;mv(Math.abs(dx)>Math.abs(dy)?(dx<0?0:1):(dy<0?2:3))};
+add();add();draw();document.addEventListener("keydown",kd);return()=>document.removeEventListener("keydown",kd)}},
+
+{id:"whack",name:"Whack-a-Mole",ic:"🐹",cat:"Arkada",pause:1,rules:"30 soniya ichida chiqayotgan kalamushni bosing. Har biri +10 ball. 150+ ball — g‘alaba.",
+start(b,a){let sc=0,t=30,up=-1;b.innerHTML='<div class="info">⏱ 30</div><div class="g3"></div>';const tm=b.firstChild,g=b.lastChild;
+g.innerHTML=[...Array(9)].map((_,i)=>`<button class="cell" data-i="${i}"></button>`).join("");const cs=[...g.children];
+g.onclick=e=>{const i=e.target.dataset.i;if(a.paused||i==null||+i!==up)return;sc+=10;a.set(sc);beep(800);cs[up].textContent="";up=-1};
+const mo=setInterval(()=>{if(a.paused)return;if(up>=0)cs[up].textContent="";up=rnd(9);cs[up].textContent="🐹"},750);
+const ti=setInterval(()=>{if(a.paused)return;tm.textContent="⏱ "+--t;if(t<=0)a.end("Vaqt tugadi! Ball: "+sc,sc>=150)},1000);
+return()=>{clearInterval(mo);clearInterval(ti)}}}
+];
+
+let cur=null,stop=null,cat="Hammasi";const $$=s=>[...document.querySelectorAll(s)];
+const card=g=>`<div class="card"><button class="fv" data-f="${g.id}" aria-label="Sevimli">${S.fav.includes(g.id)?"★":"☆"}</button><div class="ic">${g.ic}</div><h3>${g.name}</h3><p>${g.cat} · ▶ ${S.plays[g.id]||0} · 🏆 ${S.best[g.id]||0}</p><button class="btn pri play" data-p="${g.id}">Play</button></div>`;
+function render(){const q=$("#q").value.trim().toLowerCase();
+const cats=["Hammasi","★ Sevimli",...new Set(G.map(g=>g.cat))];
+$("#chips").innerHTML=cats.map(c=>`<button class="btn ${c==cat?"on":""}" data-c="${c}">${c}</button>`).join("");
+const list=G.filter(g=>g.name.toLowerCase().includes(q)&&(cat=="Hammasi"||(cat=="★ Sevimli"?S.fav.includes(g.id):g.cat==cat)));
+$("#grid").innerHTML=list.map(card).join("")||"<p>Hech narsa topilmadi.</p>";
+const rec=S.recent.map(id=>G.find(g=>g.id==id)).filter(Boolean);$("#recentS").hidden=!rec.length;$("#recent").innerHTML=rec.map(card).join("");
+const pop=[...G].filter(g=>S.plays[g.id]).sort((a,b)=>S.plays[b.id]-S.plays[a.id]).slice(0,4);$("#popS").hidden=!pop.length;$("#popG").innerHTML=pop.map(card).join("");
+$("#stat").textContent="Jami o‘yinlar: "+Object.values(S.plays).reduce((a,b)=>a+b,0)+" · O‘yin turlari: "+G.length;
+$("#snd").textContent=S.sound?"🔊":"🔇";document.documentElement.dataset.theme=S.theme}
+
+function open_(id){if(stop)stop();stop=null;cur=G.find(g=>g.id==id);const g=cur;
+S.plays[id]=(S.plays[id]||0)+1;S.recent=[id,...S.recent.filter(x=>x!=id)].slice(0,4);save();
+$("#home").hidden=true;$("#play").hidden=false;$("#gt").textContent=g.ic+" "+g.name;$("#rules").textContent=g.rules;
+$("#sc").textContent=0;$("#bs").textContent=S.best[id]||0;$("#ov").hidden=true;$("#ps").hidden=!g.pause;$("#ps").textContent="Pause";
+const box=document.createElement("div");$("#box").replaceWith(box);box.id="box";
+const api={paused:false,set(n){$("#sc").textContent=n;if(n>(S.best[id]||0)){S.best[id]=n;save();$("#bs").textContent=n}},
+end(m,w){if(stop){stop();stop=null}beep(w?900:200,.3);$("#ov").innerHTML=`<div>${w?"🏆":"💀"} ${m}</div><button class="btn pri" id="again">Qayta o‘ynash</button>`;$("#ov").hidden=false;$("#again").onclick=()=>open_(id)}};
+$("#ps").onclick=()=>{api.paused=!api.paused;$("#ps").textContent=api.paused?"Resume":"Pause"};
+stop=g.start(box,api)||null;window.scrollTo(0,0)}
+function home(){if(stop)stop();stop=null;$("#play").hidden=true;$("#home").hidden=false;render()}
+
+document.addEventListener("click",e=>{const t=e.target.closest("[data-p],[data-f],[data-c],[data-h]");if(!t)return;
+if(t.dataset.p)open_(t.dataset.p);
+else if(t.dataset.f){const i=S.fav.indexOf(t.dataset.f);i<0?S.fav.push(t.dataset.f):S.fav.splice(i,1);save();render()}
+else if(t.dataset.c){cat=t.dataset.c;render()}
+else{e.preventDefault();if($("#home").hidden)home();const el=t.dataset.h=="top"?document.body:$("#"+t.dataset.h);el.scrollIntoView({behavior:"smooth"})}});
+$("#back").onclick=home;$("#rs").onclick=()=>cur&&open_(cur.id);
+$("#rnd").onclick=()=>open_(G[rnd(G.length)].id);
+$("#snd").onclick=()=>{S.sound=S.sound?0:1;save();render()};
+$("#thm").onclick=()=>{S.theme=S.theme=="dark"?"light":"dark";save();render()};
+$("#q").oninput=()=>{if(!$("#play").hidden)home();render()};
+render();
+</script></body></html>
